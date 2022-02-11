@@ -3,7 +3,7 @@ package org.apache.drill.test.framework;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import oadd.org.apache.drill.exec.proto.UserBitShared;
+import org.apache.drill.exec.server.rest.profile.CoreOperatorType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -208,13 +208,13 @@ public class DrillQueryProfile {
      * @param operator
      * @return
      */
-    public long getOptimalMemoryPerOperator(final UserBitShared.CoreOperatorType operator) {
+    public long getOptimalMemoryPerOperator(final CoreOperatorType operator) {
         return this.fragmentProfiles
                 .stream()
                 .flatMap(f -> f.minorFragmentProfiles
                         .stream()
                         .flatMap(m -> m.operatorProfiles.stream())
-                ).filter(o -> o.operatorId == operator.getNumber())
+                ).filter(o -> o.operatorId == operator.getId())
                 .mapToLong(o -> o.optimalMemAllocation)
                 .sum();
     }
@@ -223,14 +223,14 @@ public class DrillQueryProfile {
      * Get different operators in the profile.
      * @return a list of operators in the query profile.
      */
-    public List<UserBitShared.CoreOperatorType> getOperatorsFromProfile() {
+    public List<CoreOperatorType> getOperatorsFromProfile() {
         return this.fragmentProfiles
                 .stream().flatMap(f -> f.minorFragmentProfiles
                         .stream()
                         .flatMap(m -> m.operatorProfiles.stream())
                 ).mapToInt(o -> o.operatorId)
                 .distinct()
-                .mapToObj(UserBitShared.CoreOperatorType::forNumber)
+                .mapToObj(CoreOperatorType::valueOf)
                 .collect(Collectors.toList());
     }
 

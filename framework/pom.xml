@@ -9,10 +9,23 @@
     <testng.version>6.4</testng.version>
     <log4j.version>1.2.17</log4j.version>
     <jackson.version>2.10.0</jackson.version>
-    <drill.version>${env.DRILL_VERSION}</drill.version>
-    <hadoop.version>${env.HADOOP_VERSION}</hadoop.version>
-    <runtimeDepenencies>${env.DRILL_HOME}/conf</runtimeDepenencies>
+    <drill.version>1.20.0-SNAPSHOT</drill.version>
+    <hadoop.version>3.2.2</hadoop.version>
+    <drill.test.framework.root>${project.basedir}/..</drill.test.framework.root>
+    <drill.home>${project.basedir}/../../drill</drill.home>
+    <drill.distribution>${drill.home}/distribution/target/apache-drill-${drill.version}/apache-drill-${drill.version}/</drill.distribution>
+    <drill.jdbc.driver.path>jars/jdbc-driver/drill-jdbc-all-${drill.version}.jar</drill.jdbc.driver.path>
+    <drill.java.exec.path>jars/drill-java-exec-${drill.version}.jar</drill.java.exec.path>
+    <m2.home>${env.HOME}/.m2</m2.home>
+    <runtimeDepenencies>${drill.distribution}/conf</runtimeDepenencies>
     <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
+    <!-- Docker Plugin Properties -->
+    <maven.docker.plugin.version>0.38.1</maven.docker.plugin.version>
+    <docker.base.image>maven:3.8.4-jdk-11</docker.base.image>
+    <docker.automation.root>/root/testAutomation</docker.automation.root>
+    <docker.drill.test.framework.home>${docker.automation.root}/drill-test-framework</docker.drill.test.framework.home>
+    <docker.drill.home>${docker.automation.root}/apache-drill-${drill.version}</docker.drill.home>
+    <test.args>-s Functional -g empty</test.args>
   </properties>
   <dependencies>
     <dependency>
@@ -92,7 +105,14 @@
       <groupId>org.apache.drill.exec</groupId>
       <artifactId>drill-jdbc-all</artifactId>
       <version>${drill.version}</version>
-      <systemPath>${env.DRILL_HOME}/jars/jdbc-driver/drill-jdbc-all-${drill.version}.jar</systemPath>
+      <systemPath>${drill.distribution}/${drill.jdbc.driver.path}</systemPath>
+      <scope>system</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.drill.exec</groupId>
+      <artifactId>drill-java-exec</artifactId>
+      <version>${drill.version}</version>
+      <systemPath>${drill.distribution}/${drill.java.exec.path}</systemPath>
       <scope>system</scope>
     </dependency>
     <dependency>
@@ -141,7 +161,7 @@
       <id>mapr-releases</id>
       <url>http://repository.mapr.com/maven/</url>
       <releases>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </releases>
       <snapshots>
         <enabled>false</enabled>
@@ -150,6 +170,61 @@
   </repositories>
   <build>
     <plugins>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>${maven.docker.plugin.version}</version>
+        <configuration>
+          <showLogs>true</showLogs>
+          <verbose>true</verbose>
+          <images>
+            <image>
+              <name>drill-test-framework</name>
+              <build>
+                <nocache>false</nocache>
+                <from>${docker.base.image}</from>
+              </build>
+              <run>
+                <containerNamePattern>%n_%t_%i</containerNamePattern>
+                <wait>
+                  <exit>0</exit>
+                  <time>1210000000</time>
+                </wait>
+                <volumes>
+                  <bind>
+                    <volume>${drill.test.framework.root}:${docker.drill.test.framework.home}</volume>
+                    <volume>${drill.distribution}:${docker.drill.home}</volume>
+                    <volume>${m2.home}:/root/.m2</volume>
+                  </bind>
+                </volumes>
+                <workingDir>${docker.drill.test.framework.home}</workingDir>
+                <network>
+                  <mode>host</mode>
+                </network>
+                <cmd>
+                  <shell>/bin/bash bin/run_tests --jdbcCP ${docker.drill.home}/${drill.jdbc.driver.path} ${test.args}</shell>
+                </cmd>
+              </run>
+            </image>
+          </images>
+        </configuration>
+        <!--<executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>start</id>
+            <phase>test</phase>
+            <goals>
+              <goal>run</goal>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>-->
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>

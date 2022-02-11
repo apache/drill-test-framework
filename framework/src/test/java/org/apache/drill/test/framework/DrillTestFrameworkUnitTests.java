@@ -2,7 +2,7 @@ package org.apache.drill.test.framework;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import oadd.org.apache.drill.exec.proto.UserBitShared;
+import org.apache.drill.exec.server.rest.profile.CoreOperatorType;
 import org.apache.drill.test.framework.common.DrillJavaTestBase;
 import org.apache.log4j.Logger;
 import org.testng.Assert;
@@ -182,7 +182,7 @@ public class DrillTestFrameworkUnitTests extends DrillJavaTestBase {
             LOG.info("Memory estimated by RM planner: " + rmMemEstimate);
             Assert.assertTrue(rmMemEstimate > 0,
                     "RM estimated memory should be greater than 0");
-            List<UserBitShared.CoreOperatorType> operators = profile.getOperatorsFromProfile();
+            List<CoreOperatorType> operators = profile.getOperatorsFromProfile();
             Assert.assertTrue(operators.size() > 0,
                     "Number of operators in the profile should be greater than 0");
             operators.forEach(LOG::info);
