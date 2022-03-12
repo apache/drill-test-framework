@@ -24,8 +24,8 @@
             "dest": "union_all"
         },
         {
-           "mode": "gen",
-           "src": "Datasources/limit0/union_all/create_union_all_views.sh",
+           "mode": "ddl",
+           "src": "Datasources/limit0/union_all/create_union_all_views.sql",
            "dest": ""
         }
     ]

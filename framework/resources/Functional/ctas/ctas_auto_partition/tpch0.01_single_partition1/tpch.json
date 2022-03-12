@@ -17,10 +17,20 @@
         }
     ],
     "datasources": [
-       {
-            "mode": "gen",
-            "src": "Datasources/ctas_auto_partition/ctas_tpch_single_partition1.sh",
-            "dest": ""
-       } 
+      {
+        "mode": "del",
+        "src": "",
+        "dest": "ctas_auto_partition/tpch_single_partition1"
+      },
+      {
+        "mode": "mkdir",
+        "src": "",
+        "dest": "ctas_auto_partition/tpch_single_partition1"
+      },
+      {
+        "mode": "ddl",
+        "src": "Datasources/ctas_auto_partition/ctas_tpch_single_partition1.ddl",
+        "dest": ""
+      }
     ]
 }

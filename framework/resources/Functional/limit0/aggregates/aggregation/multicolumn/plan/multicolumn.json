@@ -21,8 +21,8 @@
             "dest": "aggregation"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/limit0/aggregates/aggregation/multicolumn/create_multicolumn_views.sh",
+            "mode": "ddl",
+            "src": "Datasources/limit0/aggregates/aggregation/multicolumn/create_multicolumn_views.sql",
             "dest": ""
         }
     ]

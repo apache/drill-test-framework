@@ -21,8 +21,13 @@
             "dest": "subqueries"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/subqueries/create_tables.sh",
+            "mode": "del",
+            "src": "",
+            "dest": "subqueries/hive1_parquet_part"
+        },
+        {
+            "mode": "ddl",
+            "src": "Datasources/subqueries/create_tables.sql",
             "dest": ""
         }
     ]

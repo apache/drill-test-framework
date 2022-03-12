@@ -44,9 +44,9 @@
       "dest": "decimal/DRILL_6094/decimal.parquet"
     },
     {
-       "mode": "gen",
-       "src": "Datasources/ctas/decimal/create_decimals_test_data.sh",
-       "dest": ""
+      "mode": "ddl",
+      "src": "Datasources/ctas/decimal/createParquetWithDecimals.ddl",
+      "dest": ""
     }
   ]
 }

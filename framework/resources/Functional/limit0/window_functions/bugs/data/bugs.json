@@ -21,8 +21,8 @@
             "dest": "subqueries"
         },
         { 
-            "mode": "gen", 
-            "src": "Datasources/limit0/window_functions/bugs/create_wf_bugs_views.sh", 
+            "mode": "ddl",
+            "src": "Datasources/limit0/window_functions/bugs/create_wf_bugs_views.sql",
             "dest": "" 
         } 
     ]

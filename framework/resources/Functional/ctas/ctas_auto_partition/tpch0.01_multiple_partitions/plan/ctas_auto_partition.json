@@ -18,9 +18,18 @@
     ],
     "datasources": [
         {
-            "mode": "gen",
-            "src": "Datasources/ctas_auto_partition/ctas_tpch_multiple_partitions.sh",
-            "dest": ""
+            "mode": "del",
+            "src": "",
+            "dest": "ctas_auto_partition/tpch_multiple_partitions"
+        },
+        {
+            "mode": "mkdir",
+            "src": "",
+            "dest": "ctas_auto_partition/tpch_multiple_partitions"
+        },
+        {
+            "mode": "ddl",
+            "src": "Datasources/ctas_auto_partition/ctas_tpch_multiple_partitions.ddl"
         }
     ]
 }

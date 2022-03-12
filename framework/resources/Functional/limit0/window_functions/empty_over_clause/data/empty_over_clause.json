@@ -21,8 +21,8 @@
             "dest": "subqueries"
         },
         { 
-            "mode": "gen", 
-            "src": "Datasources/limit0/window_functions/empty_over_clause/create_wf_empty_over_clause_views.sh", 
+            "mode": "ddl",
+            "src": "Datasources/limit0/window_functions/empty_over_clause/create_wf_empty_over_clause_views.sql",
             "dest": "" 
         } 
     ]

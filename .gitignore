@@ -21,6 +21,7 @@ git.properties
 framework/resources/Datasources/s3minio/minio/minio_data/.minio.sys
 framework/resources/Datasources/s3minio/minio/minio_data/tstbucket/tmp/ppruning/
 framework/resources/Datasources/s3minio/minio/minio_data/tstbucket/tmp/gitignore
+drill-output/
 
 # Hive stuff
 metastore_db

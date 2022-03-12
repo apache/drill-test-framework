@@ -21,8 +21,8 @@
             "dest": "aggregation"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/limit0/aggregates/aggregation/group_by_case/create_groupByCase_views.sh",
+            "mode": "ddl",
+            "src": "Datasources/limit0/aggregates/aggregation/group_by_case/create_groupByCase_views.sql",
             "dest": ""
         }
     ]

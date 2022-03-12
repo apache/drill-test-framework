@@ -22,6 +22,36 @@
        "mode": "gen",
        "src": "Datasources/ctas/decimal/fragments/decimal_fragments.sh",
        "dest": ""
+    },
+    {
+      "mode": "gen",
+      "src": "Datasources/ctas/decimal/fragments/decimal_fragments.sh $DRILL_TESTDATA_DIR",
+      "dest": ""
+    },
+    {
+      "mode": "mkdir",
+      "src": "",
+      "dest": "decimal/fragments"
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/ctas/decimal/fragments/decimal_big.tsv",
+      "dest": "decimal/fragments/decimal_big.tsv"
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/ctas/decimal/fragments/decimal_big_zero_prec.tsv",
+      "dest": "decimal/fragments/decimal_big_zero_prec.tsv"
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/ctas/decimal/fragments/decimal_big_zero_scale.tsv",
+      "dest": "decimal/fragments/decimal_big_zero_scale.tsv"
+    },
+    {
+      "mode": "ddl",
+      "src:": "Datasources/ctas/decimal/fragments/decimal_fragments.ddl",
+      "dest": ""
     }
   ]
 }

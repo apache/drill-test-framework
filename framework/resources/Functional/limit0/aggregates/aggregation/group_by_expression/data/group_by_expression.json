@@ -21,8 +21,8 @@
             "dest": "aggregation"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/limit0/aggregates/aggregation/count_distinct/create_count_distinct_views.sh",
+            "mode": "ddl",
+            "src": "Datasources/limit0/aggregates/aggregation/count_distinct/create_count_distinct_views.sql",
             "dest": ""
         }
     ]

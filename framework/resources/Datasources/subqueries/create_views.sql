@@ -1,4 +1,4 @@
-create or replace view optional_type_v as
+create or replace view dfs.subqueries.optional_type_v as
 select
         cast(c_varchar as varchar(100))		as c_varchar,
         cast(c_integer as integer)		as c_integer,
@@ -10,10 +10,10 @@ select
         cast(c_timestamp as timestamp)		as c_timestamp,
         cast(c_boolean as boolean)		as c_boolean
 from
-        j1
+    dfs.subqueries.j1
 ;
 
-create or replace view required_type_v as
+create or replace view dfs.subqueries.required_type_v as
 select
         cast(c_varchar as varchar(100))		as c_varchar,
         cast(c_integer as integer)		as c_integer,
@@ -25,5 +25,5 @@ select
         cast(c_timestamp as timestamp)		as c_timestamp,
         cast(c_boolean as boolean)		as c_boolean
 from
-        j3
+    dfs.subqueries.j3
 ;

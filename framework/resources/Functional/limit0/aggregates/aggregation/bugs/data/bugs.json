@@ -21,8 +21,8 @@
             "dest": "aggregation"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/limit0/aggregates/aggregation/bugs/create_bugs_view.sh",
+            "mode": "ddl",
+            "src": "Datasources/limit0/aggregates/aggregation/bugs/create_bugs_view.sql",
             "dest": ""
         }
     ]

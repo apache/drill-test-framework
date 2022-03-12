@@ -24,8 +24,18 @@
             "dest": "join"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/join/crt_tbl_prtntd_tbl.sh",
+            "mode": "ddl",
+            "src": "Datasources/join/crt_tbls_partition_by_l.ddl",
+            "dest": ""
+        },
+        {
+            "mode": "ddl",
+            "src": "Datasources/join/crt_tbls_partition_by_r.ddl",
+            "dest": ""
+        },
+        {
+            "mode": "ddl",
+            "src": "Datasources/join/crt_tbl_prtnby_nulls.ddl",
             "dest": ""
         }
     ]

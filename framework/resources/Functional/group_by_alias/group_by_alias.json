@@ -24,8 +24,8 @@
       "dest": "DRILL-1248/group_by.tsv"
     },
     {
-       "mode": "gen",
-       "src": "Datasources/ctas/DRILL-1248/ctas.sh",
+       "mode": "ddl",
+       "src": "Datasources/ctas/DRILL-1248/group_by.ddl",
        "dest": ""
     }
   ]

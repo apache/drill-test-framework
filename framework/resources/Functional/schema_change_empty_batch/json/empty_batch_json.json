@@ -4,7 +4,7 @@
   "description": "Test drill queries involving empty batches for json files",
   "submit-type": "jdbc",
   "categories": [
-    "functional"
+    "excluded"
   ],
   "matrices": [
     {

@@ -1,4 +1,4 @@
-CREATE TABLE `complex.json` AS 
+CREATE TABLE dfs.drillTestDirComplexParquet.`complex.json` AS
   SELECT id, 
          gbyi, 
          gbyt, 

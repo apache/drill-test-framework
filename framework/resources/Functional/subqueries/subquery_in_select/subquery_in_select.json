@@ -19,8 +19,8 @@
   ],
   "datasources": [
     {
-       "mode": "gen",
-       "src": "Datasources/ctas/subqueries/subqueries_select.sh",
+       "mode": "ddl",
+       "src": "Datasources/ctas/subqueries/subqueries_select.ddl",
        "dest": ""
     }
   ]

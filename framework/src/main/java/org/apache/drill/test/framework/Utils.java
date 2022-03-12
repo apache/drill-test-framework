@@ -343,9 +343,11 @@ public class Utils {
         }
         boolean skipSuite = false;
         if (modeler.dependencies != null) {
+          List<String> excludedDependencies = TestDriver.cmdParam.excludeDependenciesAsList();
           for (String dependency : modeler.dependencies) {
-            if (TestDriver.cmdParam.excludeDependenciesAsList().contains(dependency)) {
+            if (excludedDependencies.contains("all") || excludedDependencies.contains(dependency)) {
               skipSuite = true;
+              break;
             }
           }
         }
@@ -1155,5 +1157,19 @@ public class Utils {
       LOG.warn("Failure while trying to load \"git.properties\" file.", e);
     }
     return String.format("Commit: %s\nAuthor: %s <%s>\n\n%s", commitID, commitAuthor, commitEmail, commitMessage);
+  }
+
+  public static String substituteArguments(String cmd) {
+    String[] command = cmd.split(" ");
+    for (int i = 1; i < command.length; i++) {
+      String arg = command[i];
+      if (arg.startsWith("$")) {
+        arg = arg.substring(1);
+        if (DrillTestDefaults.getDrillDefaults().containsKey(arg)) {
+          command[i] = DrillTestDefaults.getDrillDefaults().get(arg);
+        }
+      }
+    }
+    return String.join(" ", command);
   }
 }

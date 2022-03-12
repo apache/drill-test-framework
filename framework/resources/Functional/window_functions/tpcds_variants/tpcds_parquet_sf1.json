@@ -22,9 +22,14 @@
             "src": "Datasources/tpcds/sf1/parquet",
             "dest": "tpcds_sf1/parquet"
         },
+        {
+            "mode": "mkdir",
+            "src": "",
+            "dest": "tpcds_sf1/parquet/views"
+        },
 	{
-            "mode": "gen",
-            "src": "Datasources/tpcds/createViewsParquet.sh",
+            "mode": "ddl",
+            "src": "Datasources/tpcds/createViewsParquet.sql",
             "dest": ""
         }
     ]

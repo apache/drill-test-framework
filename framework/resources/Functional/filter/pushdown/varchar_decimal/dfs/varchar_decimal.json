@@ -18,6 +18,11 @@
   ],
   "datasources": [
     {
+      "mode": "del",
+      "src": "",
+      "dest": "filter/pushdown/varchar_decimal"
+    },
+    {
       "mode": "cp",
       "src": "Datasources/parquet_storage/filter/pushdown/varchar_decimal/no_metadata_file",
       "dest": "filter/pushdown/varchar_decimal/no_metadata_file/"
@@ -33,9 +38,14 @@
       "dest": "filter/pushdown/varchar_decimal/old_metadata_file/"
     },
     {
-      "mode": "gen",
-      "src": "Datasources/parquet_storage/filter/pushdown/varchar_decimal/copy_metadata.sh",
-      "dest": ""
+      "mode": "post_cp",
+      "src": "Datasources/parquet_storage/filter/pushdown/varchar_decimal/new_metadata_file",
+      "dest": "filter/pushdown/varchar_decimal/new_metadata_file/"
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/parquet_storage/filter/pushdown/varchar_decimal/old_metadata_file",
+      "dest": "filter/pushdown/varchar_decimal/old_metadata_file/"
     }
   ]
 }
