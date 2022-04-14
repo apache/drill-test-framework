@@ -85,6 +85,18 @@ A test definition file is a JSON file that defines one or a set of tests within 
  }
 </code></pre>
 
+The data described in "datasources" section is prepared in several stages. The stages are defined by "mode" field and executed in the following order:  
+- **rm** - remove data specified in "dest" field
+- **cp** - copy data from "src" in local file system to "dest" in the target fs
+- **mkdir** - make directory specified in "dest"
+- **gen** - execute command specified in "src". In case of a file with .ddl extension it will be send to Drill through JDBC
+- **post_rm** - the same as "rm" but executed later
+- **post_cp** - the same as "cp" but executed later
+- **dfs_cp** - copy data between dfs locations
+- **ddl** - executes specified ddl file through JDBC
+
+Note that local paths are based on DRILL_TEST_DATA_DIR property (by default it is framework/resources), and all dfs paths are based on DRILL_TESTDATA property (by default it is /drill/testdata)  
+
 ### Special handling for Drill version in regex based baseline verification
 
 The Drill version in a regex based baseline file can be substituted with "{DRILL_VERSION}". 

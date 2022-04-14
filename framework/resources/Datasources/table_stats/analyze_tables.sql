@@ -1,4 +1,5 @@
 set `store.parquet.reader.int96_as_timestamp`=true;
+use dfs.drillTestDir;
 analyze table `table_stats/alltypes_with_nulls` compute statistics;
 analyze table `table_stats/date_intervals` compute statistics;
 analyze table `table_stats/impala_parquet` compute statistics;

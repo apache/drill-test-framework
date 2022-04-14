@@ -33,12 +33,12 @@
       "dest": "/drill/testdata/drill-3947"
     },
     {
-      "mode": "del",
+      "mode": "rm",
       "src": "",
       "dest": "ctas_auto_partition/existing_partition_pruning"
     },
     {
-      "mode": "del",
+      "mode": "rm",
       "src": "",
       "dest": "ctas_auto_partition/tpch_single_partition1"
     },

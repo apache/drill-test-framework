@@ -1,41 +1,152 @@
 {
-    "testId": "Metadata_Caching_GeneratedCaches",
-    "type": "group",
-    "description": "Metadata Caching Tests with smaller data sets",
-    "categories": [
-        "excluded"
-    ],
-    "matrices": [
-        {
-            "query-file": ".*.q",
-            "schema": "dfs.metadata_caching",
-            "output-format": "tsv",
-            "expected-file": ".*.e_tsv",
-            "verification-type": [
-                "regex"
-            ]
-        }
-    ],
-    "datasources": [
-	{
-          "mode": "cp",
-          "src": "Datasources/metadata_caching/data/",
-          "dest": "metadata_caching/"
-    	},
-        {
-           "mode": "gen",
-           "src": "Datasources/metadata_caching/delete_cache.sh /drill/testdata/metadata_caching/nation",
-           "dest": ""
-        },
-        {
-           "mode": "gen",
-           "src": "Datasources/metadata_caching/addremove_files.sh",
-           "dest": ""
-        },
-        {
-           "mode": "gen",
-           "src": "Datasources/metadata_caching/delete_toplevel_cache.sh",
-           "dest": ""
-        }
-    ]
+  "testId": "Metadata_Caching_GeneratedCaches",
+  "type": "group",
+  "description": "Metadata Caching Tests with smaller data sets",
+  "categories": [
+    "functional"
+  ],
+  "matrices": [
+    {
+      "query-file": ".*.q",
+      "schema": "dfs.metadata_caching",
+      "output-format": "tsv",
+      "expected-file": ".*.e_tsv",
+      "verification-type": [
+        "regex"
+      ]
+    }
+  ],
+  "datasources": [
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "metadata_caching/nation"
+    },
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "metadata_caching/lineitem_addfiles"
+    },
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "metadata_caching/lineitem_removefiles"
+    },
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "metadata_caching/lineitem_adddir"
+    },
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "metadata_caching/lineitem_removedir"
+    },
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "metadata_caching/lineitem_addautopartitioned_files"
+    },
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "metadata_caching/lineitem_removeautopartitioned_files"
+    },
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "metadata_caching/orders"
+    },
+    {
+      "mode": "cp",
+      "src": "Datasources/metadata_caching/data/",
+      "dest": "metadata_caching/"
+    },
+    {
+      "mode": "ddl",
+      "src": "Datasources/metadata_caching/refresh_metadata_addremovefiles.ddl",
+      "dest": ""
+    },
+    {
+      "mode": "ddl",
+      "src": "Datasources/metadata_caching/refresh_metadata_deletecache.ddl",
+      "dest": ""
+    },
+    {
+      "mode": "post_rm",
+      "src": "",
+      "dest": "metadata_caching/lineitem_removefiles/lineitem1.parquet"
+    },
+    {
+      "mode": "post_rm",
+      "src": "",
+      "dest": "metadata_caching/lineitem_removedir/feb"
+    },
+    {
+      "mode": "post_rm",
+      "src": "",
+      "dest": "metadata_caching/lineitem_removeautopartitioned_files/lineitem2.parquet"
+    },
+    {
+      "mode": "post_rm",
+      "src": "",
+      "dest": "metadata_caching/generated_caches"
+    },
+    {
+      "mode": "post_rm",
+      "src": "",
+      "dest": "metadata_caching/lineitem_deletecache/.drill.parquet_metadata"
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/metadata_caching/data/lineitem1.parquet",
+      "dest": "metadata_caching/lineitem_addfiles/lineitem1.parquet"
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/metadata_caching/data/feb",
+      "dest": "metadata_caching/lineitem_adddir/"
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/metadata_caching/data/lineitem2.parquet",
+      "dest": "metadata_caching/lineitem_addautopartitioned_files/"
+    },
+
+    {
+      "mode": "dfs_cp",
+      "src": "metadata_caching/fewtypes/.drill.parquet_file_metadata.v4",
+      "dest": "metadata_caching/generated_caches/fewtypes_cache/parquet_file_metadata.json"
+    },
+    {
+      "mode": "dfs_cp",
+      "src": "metadata_caching/fewtypes/.drill.parquet_summary_metadata.v4",
+      "dest": "metadata_caching/generated_caches/fewtypes_cache/parquet_file_metadata.json"
+    },
+    {
+      "mode": "dfs_cp",
+      "src": "metadata_caching/fewtypes/.drill.parquet_file_metadata.v4",
+      "dest": "metadata_caching/generated_caches/fewtypes_cache/parquet_file_metadata.json"
+    },
+    {
+      "mode": "dfs_cp",
+      "src": "metadata_caching/fewtypes/.drill.parquet_file_metadata.v4",
+      "dest": "metadata_caching/generated_caches/fewtypes_cache/parquet_file_metadata.json"
+    },
+    {
+      "mode": "dfs_cp",
+      "src": "metadata_caching/fewtypes/.drill.parquet_file_metadata.v4",
+      "dest": "metadata_caching/generated_caches/fewtypes_cache/parquet_file_metadata.json"
+    },
+    {
+      "mode": "dfs_cp",
+      "src": "metadata_caching/fewtypes/.drill.parquet_file_metadata.v4",
+      "dest": "metadata_caching/generated_caches/fewtypes_cache/parquet_file_metadata.json"
+    },
+    {
+      "mode": "dfs_cp",
+      "src": "metadata_caching/fewtypes/.drill.parquet_file_metadata.v4",
+      "dest": "metadata_caching/generated_caches/fewtypes_cache/parquet_file_metadata.json"
+    }
+  ]
 }

@@ -3,7 +3,7 @@
   "type": "group",
   "description": "Test text read queries",
   "categories": [
-    "exclude"
+    "functional"
   ],
   "matrices": [
     {
@@ -18,14 +18,39 @@
   ],
   "datasources": [
     {
+      "mode": "rm",
+      "src": "",
+      "dest": "text_storage/drill-4484"
+    },
+    {
+      "mode": "mkdir",
+      "src": "",
+      "dest": "text_storage/drill-4484/20160401/3"
+    },
+    {
+      "mode": "mkdir",
+      "src": "",
+      "dest": "text_storage/drill-4484/20160404"
+    },
+    {
+      "mode": "mkdir",
+      "src": "",
+      "dest": "text_storage/drill-4484/20160501/1"
+    },
+    {
+      "mode": "mkdir",
+      "src": "",
+      "dest": "text_storage/drill-4484/20160501/2"
+    },
+    {
+      "mode": "mkdir",
+      "src": "",
+      "dest": "text_storage/drill-4484/20160502"
+    },
+    {
       "mode": "cp",
       "src": "Datasources/text_storage",
       "dest": "text_storage"
-    },
-    {
-      "mode": "gen",
-      "src": "Datasources/text_storage/drill-4484.sh",
-      "dest": ""
     }
   ]
 }

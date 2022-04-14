@@ -28,7 +28,7 @@
       "dest": "partition_pruning/hive"
     },
     {
-      "mode": "del",
+      "mode": "rm",
       "src": "",
       "dest": "ctas_auto_partition/existing_partition_pruning"
     },

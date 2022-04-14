@@ -21,7 +21,7 @@
             "dest": "subqueries"
         },
         {
-            "mode": "del",
+            "mode": "rm",
             "src": "",
             "dest": "subqueries/hive1_parquet_part"
         },

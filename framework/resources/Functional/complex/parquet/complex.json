@@ -19,7 +19,7 @@
     ],
     "datasources": [
         {
-            "mode": "del",
+            "mode": "rm",
             "src": "",
             "dest": "complex/parquet/complex.json"
         },

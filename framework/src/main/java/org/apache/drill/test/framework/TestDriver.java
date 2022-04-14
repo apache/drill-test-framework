@@ -741,16 +741,18 @@ public class TestDriver {
 
     boolean restartDrillbits = false;
 
-    List<Cancelable> delTasks = new ArrayList<>();
+    List<Cancelable> rmTasks = new ArrayList<>();
     List<Cancelable> copyTasks = new ArrayList<>();
     List<Cancelable> mkdirTasks = new ArrayList<>();
     List<Cancelable> genTasks = new ArrayList<>();
+    List<Cancelable> postRmTasks = new ArrayList<>();
     List<Cancelable> postCopyTasks = new ArrayList<>();
+    List<Cancelable> dfsCopyTasks = new ArrayList<>();
     List<Cancelable> ddlTasks = new ArrayList<>();
     for (final TestCaseModeler.DataSource datasource : dataSources) {
       String mode = datasource.mode;
       switch (mode) {
-        case "del": {
+        case "rm": {
           Cancelable task = new Cancelable() {
             @Override
             public void cancel() {
@@ -767,7 +769,7 @@ public class TestDriver {
               }
             }
           };
-          delTasks.add(task);
+          rmTasks.add(task);
           break;
         }
         case "cp": {
@@ -826,6 +828,26 @@ public class TestDriver {
           genTasks.add(task);
           break;
         }
+        case "post_rm": {
+          Cancelable task = new Cancelable() {
+            @Override
+            public void cancel() {
+              // no op, as this will not time out
+            }
+
+            @Override
+            public void run() {
+              try {
+                Path dest = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.dest);
+                dfsDelete(dest, DrillTestDefaults.FS_MODE);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            }
+          };
+          postRmTasks.add(task);
+          break;
+        }
         case "post_cp": {
           Cancelable task = new Cancelable() {
             @Override
@@ -845,6 +867,27 @@ public class TestDriver {
             }
           };
           postCopyTasks.add(task);
+          break;
+        }
+        case "dfs_cp": {
+          Cancelable task = new Cancelable() {
+            @Override
+            public void cancel() {
+              // no op, as this will not time out
+            }
+
+            @Override
+            public void run() {
+              try {
+                Path src = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.src);
+                Path dest = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.dest);
+                dfsToDfsCopy(src, dest, DrillTestDefaults.FS_MODE);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            }
+          };
+          dfsCopyTasks.add(task);
           break;
         }
         case "ddl": {
@@ -872,21 +915,41 @@ public class TestDriver {
     final Stopwatch stopwatch = Stopwatch.createStarted();
 
     try (CancelingExecutor executor = new CancelingExecutor(cmdParam.threads, Integer.MAX_VALUE)) {
-      LOG.info("> Clearing data");
-      executor.executeAll(delTasks);
-      LOG.info("> Copying Data");
-      executor.executeAll(copyTasks);
-      LOG.info("> Making directories");
-      executor.executeAll(mkdirTasks);
-      LOG.info(">> Copy duration: " + stopwatch + "\n");
-      stopwatch.reset().start();
-      LOG.info("> Generating Data");
-      executor.executeAll(genTasks);
-      LOG.info("> Copying generated Data");
-      executor.executeAll(postCopyTasks);
-      LOG.info("> Executing DDL scripts");
-      executor.executeAll(ddlTasks);
-      LOG.info("\n>> Generation duration: " + stopwatch + "\n");
+      if (!rmTasks.isEmpty()) {
+        LOG.info("> Clearing Data");
+        executor.executeAll(rmTasks);
+      }
+      if (!copyTasks.isEmpty()) {
+        LOG.info("> Copying Data");
+        executor.executeAll(copyTasks);
+        LOG.info(">> Copy duration: " + stopwatch + "\n");
+        stopwatch.reset().start();
+      }
+      if (!mkdirTasks.isEmpty()) {
+        LOG.info("> Making directories");
+        executor.executeAll(mkdirTasks);
+      }
+      if (!genTasks.isEmpty()) {
+        LOG.info("> Generating Data");
+        executor.executeAll(genTasks);
+        LOG.info("\n>> Generation duration: " + stopwatch + "\n");
+      }
+      if (!rmTasks.isEmpty()) {
+        LOG.info("> Clearing Data after generating");
+        executor.executeAll(postRmTasks);
+      }
+      if (!postCopyTasks.isEmpty()) {
+        LOG.info("> Copying generated Data");
+        executor.executeAll(postCopyTasks);
+      }
+      if (!dfsCopyTasks.isEmpty()) {
+        LOG.info("> Rearranging Data on DFS");
+        executor.executeAll(dfsCopyTasks);
+      }
+      if (!ddlTasks.isEmpty()) {
+        LOG.info("> Executing DDL scripts");
+        executor.executeAll(ddlTasks);
+      }
     }
 
     if (restartDrillbits) {
@@ -938,8 +1001,40 @@ public class TestDriver {
           LOG.debug("File " + src + " already exists as " + dest);
         }
       }
-    } catch (FileAlreadyExistsException e) {
+    } catch (IOException e) {
       LOG.debug("File " + src + " already exists as " + dest);
+    }
+  }
+
+  private void dfsToDfsCopy(Path src, Path dest, String fsMode)
+          throws IOException {
+
+    FileSystem fs;
+
+    if (fsMode.equals("distributedFS")) {
+      fs = FileSystem.get(conf);
+    } else {
+      fs = FileSystem.getLocal(conf);
+    }
+
+    try {
+      if (fs.getFileStatus(src).isDirectory()) {
+        for (FileStatus file : fs.listStatus(src)) {
+          Path srcChild = file.getPath();
+          Path newDest = new Path(dest + "/" + srcChild.getName());
+          dfsCopy(srcChild, newDest, fsMode);
+        }
+      } else {
+        if (!fs.exists(dest.getParent())) {
+          fs.mkdirs(dest.getParent());
+        }
+        if (!fs.exists(dest)) {
+          FileUtil.copy(fs, src, fs, dest, false, fs.getConf());
+          LOG.debug("Copying file " + src + " to " + dest);
+        } else {
+          LOG.debug("File " + src + " already exists as " + dest);
+        }
+      }
     } catch (IOException e) {
       LOG.debug("File " + src + " already exists as " + dest);
     }
@@ -961,22 +1056,26 @@ public class TestDriver {
 
   private void runGenerateScript(DataSource datasource) {
     String command = DrillTestDefaults.TEST_ROOT_DIR + "/" + DrillTestDefaults.DRILL_TESTDATA_DIR + "/" + datasource.src;
-    command = Utils.substituteArguments(command);
-    LOG.info("Running command " + command);
-    CmdConsOut cmdConsOut;
-    try {
-      cmdConsOut = Utils.execCmd(command);
-      LOG.debug(cmdConsOut);
-    } catch (Exception e) {
-      cmdConsOut = new CmdConsOut();
-      cmdConsOut.cmd = command;
-      cmdConsOut.consoleErr = e.getMessage();
-      LOG.error("Error: Failed to execute the command " + cmdConsOut);
-      throw new RuntimeException(e);
-    }
-    if (cmdConsOut.exitCode != 0) {
-      throw new RuntimeException("Error executing the command " + command
-              + " has return code " + cmdConsOut.exitCode);
+    if (command.endsWith(".ddl") && command.split(" ").length == 1) {
+      runDDL(new Path(command));
+    } else {
+      command = Utils.substituteArguments(command);
+      LOG.info("Running command " + command);
+      CmdConsOut cmdConsOut;
+      try {
+        cmdConsOut = Utils.execCmd(command);
+        LOG.debug(cmdConsOut);
+      } catch (Exception e) {
+        cmdConsOut = new CmdConsOut();
+        cmdConsOut.cmd = command;
+        cmdConsOut.consoleErr = e.getMessage();
+        LOG.error("Error: Failed to execute the command " + cmdConsOut);
+        throw new RuntimeException(e);
+      }
+      if (cmdConsOut.exitCode != 0) {
+        throw new RuntimeException("Error executing the command " + command
+                + " has return code " + cmdConsOut.exitCode);
+      }
     }
   }
 

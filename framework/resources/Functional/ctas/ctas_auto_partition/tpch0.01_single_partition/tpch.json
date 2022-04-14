@@ -58,7 +58,7 @@
             "dest": "Tpch0.01/parquet/orders/orders.parquet"
         },
         {
-            "mode": "del",
+            "mode": "rm",
             "src": "",
             "dest": "ctas_auto_partition/tpch_single_partition"
         },

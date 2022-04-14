@@ -21,12 +21,12 @@
             "dest": "subqueries"
         },
         {
-            "mode": "del",
+            "mode": "rm",
             "src": "",
             "dest": "subqueries/optional_type_v.view.drill"
         },
         {
-            "mode": "del",
+            "mode": "rm",
             "src": "",
             "dest": "subqueries/required_type_v.view.drill"
         },

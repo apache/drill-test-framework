@@ -1,31 +1,36 @@
 {
-    "testId": "Stats_positive_tests",
-    "type": "group",
-    "description": "Test queries using stats",
-    "categories": [
-        "excluded"
-    ],
-    "matrices": [
-        {
-            "query-file": ".*.sql",
-            "schema": "dfs.drillTestDir",
-            "output-format": "tsv",
-            "expected-file": ".*.plan",
-            "verification-type": [
-                "regex"
-            ]
-        }
-    ],
-    "datasources": [
-        {
-                "mode": "cp",
-                "src": "Datasources/table_stats/tables",
-                "dest": "table_stats"
-        },
-        {
-            "mode": "gen",
-            "src": "Datasources/table_stats/table_stats.sh",
-            "dest": ""
-        }
-    ]
+  "testId": "Stats_positive_tests",
+  "type": "group",
+  "description": "Test queries using stats",
+  "categories": [
+    "functional"
+  ],
+  "matrices": [
+    {
+      "query-file": ".*.sql",
+      "schema": "dfs.drillTestDir",
+      "output-format": "tsv",
+      "expected-file": ".*.plan",
+      "verification-type": [
+        "regex"
+      ]
+    }
+  ],
+  "datasources": [
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "table_stats"
+    },
+    {
+      "mode": "cp",
+      "src": "Datasources/table_stats/tables",
+      "dest": "table_stats"
+    },
+    {
+      "mode": "ddl",
+      "src": "Datasources/table_stats/analyze_tables.sql",
+      "dest": ""
+    }
+  ]
 }
