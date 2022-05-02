@@ -72,7 +72,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -86,7 +87,7 @@ import static org.apache.drill.test.framework.DrillTestDefaults.*;
  *
  */
 public class Utils {
-  private static final Logger LOG = Logger.getLogger("DrillTestLogger");
+  private static final Logger LOG = LoggerFactory.getLogger("DrillTestLogger");
   private static final Map<Integer, String> sqlTypes;
   private static final Map<Integer, String> sqlNullabilities;
   private static HttpClient client;
@@ -573,7 +574,7 @@ public class Utils {
 	  }
 
 	  LOG.debug("Result set data types:");
-	  LOG.debug(Utils.getTypesInStrings(types));
+	  LOG.debug(Utils.getTypesInStrings(types).toString());
 	  stringBuffer.append(new ColumnList(types, columnLabels).toString()).append("\n");
 
 	  while (resultSet.next()) {

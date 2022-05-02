@@ -42,7 +42,8 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import org.apache.drill.test.framework.TestCaseModeler.TestMatrix;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Verification of drill tests by comparing actual query output with expected
@@ -50,7 +51,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public class TestVerifier {
-  private static final Logger LOG = Logger.getLogger("DrillTestLogger"); 
+  private static final Logger LOG = LoggerFactory.getLogger("DrillTestLogger");
   private static final int MAX_MISMATCH_SIZE = 10;
   public TestStatus testStatus = TestStatus.PENDING;
   private int mapSize = 0;

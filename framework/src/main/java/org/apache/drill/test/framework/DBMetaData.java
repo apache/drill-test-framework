@@ -17,17 +17,19 @@
  */
 package org.apache.drill.test.framework;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
 
-import org.apache.log4j.Logger;
 
 /**
 * Retrieves DataBase MetaData.
 */
 
 public class DBMetaData {
-	private static final Logger LOG = Logger.getLogger("DrillTestLogger");
+	private static final Logger LOG = LoggerFactory.getLogger("DrillTestLogger");
         private DatabaseMetaData md = null;
 	public DBMetaData(DatabaseMetaData md) {
 		this.md = md;

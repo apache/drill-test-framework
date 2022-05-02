@@ -30,9 +30,10 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.FileAlreadyExistsException;
-import org.apache.log4j.Logger;
 import org.ojai.Document;
 import org.ojai.json.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -59,7 +60,7 @@ import java.util.Random;
 import java.util.Set;
 
 public class TestDriver {
-  private static final Logger LOG = Logger.getLogger("DrillTestLogger");
+  private static final Logger LOG = LoggerFactory.getLogger("DrillTestLogger");
   private Connection connection = null;
   public static String commitId, version;
   private String[] injectionKeys = {"DRILL_VERSION"};
@@ -680,7 +681,7 @@ public class TestDriver {
     	  injections.put(injectionKeys[i], version);
     	  break;
     	default:
-    	  LOG.fatal("Injection parameter not recognized!");
+    	  LOG.error("Injection parameter not recognized!");
     	}    	
       }
       connectionPool.releaseConnection(connection);
@@ -1064,7 +1065,7 @@ public class TestDriver {
       CmdConsOut cmdConsOut;
       try {
         cmdConsOut = Utils.execCmd(command);
-        LOG.debug(cmdConsOut);
+        LOG.debug(cmdConsOut.toString());
       } catch (Exception e) {
         cmdConsOut = new CmdConsOut();
         cmdConsOut.cmd = command;
@@ -1131,7 +1132,7 @@ public class TestDriver {
       }
 
       LOG.debug("Result set data types:");
-      LOG.debug(Utils.getTypesInStrings(types));
+      LOG.debug(Utils.getTypesInStrings(types).toString());
 
       if (resultSet != null) {
         while (resultSet.next()) {

@@ -4,7 +4,8 @@ import com.google.common.base.Preconditions;
 import org.apache.drill.test.framework.*;
 import org.apache.drill.test.framework.common.DrillJavaTestBase;
 import org.apache.drill.test.framework.common.DrillTestNGDefaults;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
@@ -23,7 +24,7 @@ import static org.apache.drill.test.framework.common.DrillTestNGDefaults.BASIC_R
 @SuppressWarnings("Duplicates")
 @Test(groups = FUNCTIONAL_GROUP)
 public class QueueSelectionTests extends DrillJavaTestBase {
-    private static final Logger LOG = Logger.getLogger(QueueSelectionTests.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QueueSelectionTests.class);
 
     @BeforeClass(alwaysRun = true, description = "Invoked before all tests in the class")
     private void setup() throws IOException {

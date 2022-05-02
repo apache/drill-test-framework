@@ -4,7 +4,8 @@ import com.google.common.base.Preconditions;
 import org.apache.drill.test.framework.ConnectionPool;
 import org.apache.drill.test.framework.Utils;
 import org.apache.drill.test.framework.ssh.DrillCluster;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class DrillJavaTestBase {
-    private static final Logger LOG = Logger.getLogger(DrillJavaTestBase.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DrillJavaTestBase.class);
     protected ConnectionPool connectionPool;
     protected DrillCluster drillCluster;
 

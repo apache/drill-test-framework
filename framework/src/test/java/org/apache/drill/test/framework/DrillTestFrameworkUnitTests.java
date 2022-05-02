@@ -4,7 +4,8 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.apache.drill.exec.server.rest.profile.CoreOperatorType;
 import org.apache.drill.test.framework.common.DrillJavaTestBase;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -26,7 +27,7 @@ import static org.apache.drill.test.framework.common.DrillTestNGDefaults.SAMPLE_
 
 @Test(groups = UNIT_GROUP)
 public class DrillTestFrameworkUnitTests extends DrillJavaTestBase {
-    private static final Logger LOG = Logger.getLogger(DrillTestFrameworkUnitTests.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DrillTestFrameworkUnitTests.class);
 
 
     @BeforeTest(alwaysRun = true)
@@ -185,7 +186,7 @@ public class DrillTestFrameworkUnitTests extends DrillJavaTestBase {
             List<CoreOperatorType> operators = profile.getOperatorsFromProfile();
             Assert.assertTrue(operators.size() > 0,
                     "Number of operators in the profile should be greater than 0");
-            operators.forEach(LOG::info);
+            operators.forEach(o -> LOG.info(o.name()));
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail(e.getMessage());

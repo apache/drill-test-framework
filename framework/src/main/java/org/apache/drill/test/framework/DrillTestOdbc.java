@@ -23,7 +23,8 @@ import org.apache.drill.test.framework.TestCaseModeler.TestMatrix;
 import org.apache.drill.test.framework.TestVerifier.TestStatus;
 import org.apache.drill.test.framework.TestVerifier.VerificationException;
 import org.apache.drill.test.framework.TestVerifier.PlanVerificationException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,7 +43,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DrillTestOdbc implements DrillTest{
-  private static final Logger LOG = Logger.getLogger("DrillTestLogger");
+  private static final Logger LOG = LoggerFactory.getLogger("DrillTestLogger");
   private String query = null;
   private String outputFilename;
   private volatile TestStatus testStatus = TestStatus.PENDING;
