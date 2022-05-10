@@ -21,8 +21,8 @@
             "dest": "joins"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/limit0/implicit_cast_with_views/create_implicit_cast_views.sh",
+            "mode": "ddl",
+            "src": "Datasources/limit0/implicit_cast_with_views/create_implicit_cast_views.sql",
             "dest": ""
         }
     ]

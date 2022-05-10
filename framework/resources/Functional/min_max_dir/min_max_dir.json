@@ -18,6 +18,11 @@
     ],
     "datasources": [
       {
+        "mode": "rm",
+        "src": "",
+        "dest": "min_max_dir_metadatacache"
+      },
+      {
          "mode": "cp",
          "src": "Datasources/min_max_dir/data",
          "dest": "min_max_dir"
@@ -33,8 +38,8 @@
          "dest": "drill-3474"
       },
       {
-        "mode": "gen",
-        "src": "Datasources/min_max_dir/scripts/refresh_metadata.sh",
+        "mode": "ddl",
+        "src": "Datasources/min_max_dir/scripts/refresh_metadata.ddl",
         "dest": ""
       }
     ]

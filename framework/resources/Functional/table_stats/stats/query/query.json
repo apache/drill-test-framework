@@ -18,13 +18,18 @@
   ],
   "datasources": [
     {
+      "mode": "rm",
+      "src": "",
+      "dest": "table_stats"
+    },
+    {
       "mode": "cp",
       "src": "Datasources/table_stats/tables",
       "dest": "table_stats"
     },
     {
-      "mode": "gen",
-      "src": "Datasources/table_stats/table_stats.sh",
+      "mode": "ddl",
+      "src": "Datasources/table_stats/analyze_tables.sql",
       "dest": ""
     }
   ]

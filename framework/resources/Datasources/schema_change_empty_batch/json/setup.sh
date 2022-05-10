@@ -1,5 +1,5 @@
 #!/bin/bash
-source conf/drillTestConfig.properties
+DRILL_TEST_DATA_DIR=$1
 
 set -x
 set -e
@@ -36,23 +36,6 @@ if [ ! -d ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/json
         touch ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/json/partsupp/partsuppa{f..h}.json
 
         touch ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/json/empty/empty{a..d}.json
-
-fi
-
-if ! $(hadoop fs -test -d ${DRILL_TESTDATA}/schema_change_empty_batch/json)
-    then
-
-        echo "Copying to hadoop"
-
-        hadoop fs -mkdir -p ${DRILL_TESTDATA}/schema_change_empty_batch/json
-
-        hadoop fs -put ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/json/part ${DRILL_TESTDATA}/schema_change_empty_batch/json/
-
-        hadoop fs -put ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/json/partsupp ${DRILL_TESTDATA}/schema_change_empty_batch/json/
-
-        hadoop fs -put ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/json/empty ${DRILL_TESTDATA}/schema_change_empty_batch/json/
-
-        hadoop fs -put ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/json/part_small ${DRILL_TESTDATA}/schema_change_empty_batch/json/
 
 fi
 

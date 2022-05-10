@@ -1,36 +1,66 @@
 {
-    "testId": "mcAutoPartitionParquetDate",
-    "type": "group",
-    "description": "Test drill's parquet date compatibility",
-    "categories": [
-        "functional"
-    ],
-    "matrices": [
-        {
-            "query-file": ".*.q",
-            "schema": "dfs",
-            "output-format": "tsv",
-            "expected-file": ".*.e",
-            "verification-type": [
-                "in-memory"
-            ]
-        }
-    ],
-    "datasources": [
-        {
-                "mode": "cp",
-                "src": "Datasources/parquet_date",
-                "dest": "mc_parquet_date"
-        },
-        {
-                "mode": "cp",
-                "src": "Datasources/parquet_date",
-                "dest": "parquet_date"
-        },
-        {
-            "mode": "gen",
-            "src": "Datasources/parquet_date/gen.sh",
-            "dest": ""
-        }
-    ]
+  "testId": "mcAutoPartitionParquetDate",
+  "type": "group",
+  "description": "Test drill's parquet date compatibility",
+  "categories": [
+    "functional"
+  ],
+  "matrices": [
+    {
+      "query-file": ".*.q",
+      "schema": "dfs",
+      "output-format": "tsv",
+      "expected-file": ".*.e",
+      "verification-type": [
+        "in-memory"
+      ]
+    }
+  ],
+  "datasources": [
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "parquet_date/metadata_cache"
+    },
+    {
+      "mode": "rm",
+      "src": "",
+      "dest": "parquet_date/auto_partition"
+    },
+    {
+      "mode": "cp",
+      "src": "Datasources/parquet_date",
+      "dest": "mc_parquet_date"
+    },
+    {
+      "mode": "cp",
+      "src": "Datasources/parquet_date",
+      "dest": "parquet_date"
+    },
+    {
+      "mode": "cp",
+      "src": "Datasources/parquet_date/metadata_cache/metadata_cache1.2",
+      "dest": "parquet_date/metadata_cache/metadata_cache1.2_autogen"
+    },
+    {
+      "mode": "cp",
+      "src": "Datasources/parquet_date/metadata_cache/metadata_cache1.6",
+      "dest": "parquet_date/metadata_cache/metadata_cache1.6_autogen"
+    },
+    {
+      "mode": "cp",
+      "src": "Datasources/parquet_date/auto_partition/item_multipart",
+      "dest": "parquet_date/auto_partition/item_multipart_autorefresh"
+    },
+    {
+      "mode": "cp",
+      "src": "Datasources/parquet_date/auto_partition/item_single/1.2",
+      "dest": "parquet_date/auto_partition/item_single_1.2"
+    },
+    {
+      "mode": "ddl",
+      "src": "Datasources/parquet_date/metadata_cache.ddl",
+      "dest": ""
+    }
+  ]
 }

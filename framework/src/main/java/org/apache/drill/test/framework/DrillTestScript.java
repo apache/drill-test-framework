@@ -18,28 +18,15 @@
 package org.apache.drill.test.framework;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
 import org.apache.drill.test.framework.TestCaseModeler.TestMatrix;
 import org.apache.drill.test.framework.TestVerifier.TestStatus;
-import org.apache.drill.test.framework.TestVerifier.VerificationException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DrillTestScript implements DrillTest {
-  private static final Logger LOG = Logger.getLogger("DrillTestLogger");
+  private static final Logger LOG = LoggerFactory.getLogger("DrillTestLogger");
   private String query;
   private String outputFilename;
   private volatile TestStatus testStatus = TestStatus.PENDING;
@@ -77,7 +64,7 @@ public class DrillTestScript implements DrillTest {
     try {
 
   	  cmdConsOut = Utils.execCmd(command);
-  	  LOG.info(cmdConsOut);
+  	  LOG.info(cmdConsOut.toString());
 
       switch (cmdConsOut.exitCode) {
       case 0:

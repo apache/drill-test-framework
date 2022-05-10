@@ -1,6 +1,6 @@
 use dfs.tpcds_sf1_parquet_views;
 
-create or replace view customer as select
+create or replace view dfs.tpcds_sf1_parquet_views.customer as select
 cast(c_customer_sk as integer)  as c_customer_sk,
 cast(c_customer_id as varchar(200))  as c_customer_id,
 cast(c_current_cdemo_sk as integer)  as c_current_cdemo_sk,
@@ -21,7 +21,7 @@ cast(c_email_address as varchar(200))  as c_email_address,
 cast(c_last_review_date as varchar(200))  as c_last_review_date
 from dfs.`/drill/testdata/tpcds_sf1/parquet/customer`;
 
-create or replace view customer_address as select
+create or replace view dfs.tpcds_sf1_parquet_views.customer_address as select
 cast(ca_address_sk as integer)   as ca_address_sk,
 cast(ca_address_id as varchar(200))  as ca_address_id,
 cast(ca_street_number as varchar(200))  as ca_street_number,
@@ -37,7 +37,7 @@ cast(ca_gmt_offset as integer)   as ca_gmt_offset,
 cast(ca_location_type as varchar(200))  as ca_location_type
 from dfs.`/drill/testdata/tpcds_sf1/parquet/customer_address`;
 
-create or replace view customer_demographics as select
+create or replace view dfs.tpcds_sf1_parquet_views.customer_demographics as select
 cast( cd_demo_sk as integer)  as cd_demo_sk,
 cast( cd_gender as varchar(200))  as cd_gender ,
 cast( cd_marital_status as varchar(200))  as cd_marital_status,
@@ -49,7 +49,7 @@ cast( cd_dep_employed_count as integer)  as cd_dep_employed_count,
 cast( cd_dep_college_count as integer)  as cd_dep_college_count
 from dfs.`/drill/testdata/tpcds_sf1/parquet/customer_demographics`;
 
-create or replace view household_demographics as select
+create or replace view dfs.tpcds_sf1_parquet_views.household_demographics as select
 cast( hd_demo_sk as integer)  as hd_demo_sk,
 cast( hd_income_band_sk as integer)   as hd_income_band_sk,
 cast( hd_buy_potential as varchar(200))  as hd_buy_potential,
@@ -57,7 +57,7 @@ cast( hd_dep_count as integer)   as hd_dep_count,
 cast( hd_vehicle_count as integer)   as hd_vehicle_count
 from dfs.`/drill/testdata/tpcds_sf1/parquet/household_demographics`;
 
-create or replace view item as select
+create or replace view dfs.tpcds_sf1_parquet_views.item as select
 cast( i_item_sk as integer)  as i_item_sk,
 cast( i_item_id as varchar(200))   as i_item_id,
 cast( i_rec_start_date as date)  as i_rec_start_date,
@@ -82,7 +82,7 @@ cast( i_manager_id as integer)  as i_manager_id,
 cast( i_product_name as varchar(200))   as i_product_name
 from dfs.`/drill/testdata/tpcds_sf1/parquet/item`;
 
-create or replace view promotion as select
+create or replace view dfs.tpcds_sf1_parquet_views.promotion as select
 cast( p_promo_sk as integer)  as p_promo_sk,
 cast( p_promo_id as varchar(200))  as p_promo_id,
 cast( p_start_date_sk as integer)  as p_start_date_sk,
@@ -104,7 +104,7 @@ cast( p_purpose as varchar(200))  as p_purpose,
 cast( p_discount_active as varchar(200))  as p_discount_active
 from dfs.`/drill/testdata/tpcds_sf1/parquet/promotion`;
 
-create or replace view time_dim as select
+create or replace view dfs.tpcds_sf1_parquet_views.time_dim as select
 cast( t_time_sk as integer)  as t_time_sk,
 cast( t_time_id as varchar(200))  as t_time_id,
 cast( t_time as integer)  as t_time,
@@ -117,7 +117,7 @@ cast( t_sub_shift as varchar(200))  as t_sub_shift ,
 cast( t_meal_time as varchar(200))  as t_meal_time
 from dfs.`/drill/testdata/tpcds_sf1/parquet/time_dim`;
 
-create or replace view date_dim as select
+create or replace view dfs.tpcds_sf1_parquet_views.date_dim as select
 cast( d_date_sk as integer)  as d_date_sk,
 cast( d_date_id as varchar(200))  as d_date_id,
 cast( d_date as date)  as d_date,
@@ -148,7 +148,7 @@ cast( d_current_quarter as varchar(200))  as d_current_quarter,
 cast( d_current_year as varchar(200))  as d_current_year
 from dfs.`/drill/testdata/tpcds_sf1/parquet/date_dim`;
 
-create or replace view store as select
+create or replace view dfs.tpcds_sf1_parquet_views.store as select
 cast( s_store_sk as integer)  as s_store_sk,
 cast( s_store_id as varchar(200))  as s_store_id,
 cast( s_rec_start_date as date)  as s_rec_start_date,
@@ -180,7 +180,7 @@ cast( s_gmt_offset as double)  as s_gmt_offset,
 cast( s_tax_precentage as double)  as s_tax_precentage
 from dfs.`/drill/testdata/tpcds_sf1/parquet/store`;
 
-create or replace view store_sales as select
+create or replace view dfs.tpcds_sf1_parquet_views.store_sales as select
 cast( ss_sold_date_sk as integer)  as ss_sold_date_sk,
 cast( ss_sold_time_sk as integer)  as ss_sold_time_sk,
 cast( ss_item_sk as integer)  as ss_item_sk,
@@ -206,7 +206,7 @@ cast( ss_net_paid_inc_tax as double)  as ss_net_paid_inc_tax,
 cast( ss_net_profit as double)  as ss_net_profit
 from dfs.`/drill/testdata/tpcds_sf1/parquet/store_sales`;
 
-create or replace view warehouse as select
+create or replace view dfs.tpcds_sf1_parquet_views.warehouse as select
 cast( w_warehouse_sk as integer)  as w_warehouse_sk,
 cast( w_warehouse_id as varchar(200))  as w_warehouse_id,
 cast( w_warehouse_name as varchar(200))  as w_warehouse_name,
@@ -223,7 +223,7 @@ cast( w_country as varchar(200))  as w_country,
 cast( w_gmt_offset as double)  as w_gmt_offset
 from dfs.`/drill/testdata/tpcds_sf1/parquet/warehouse`;
 
-create or replace view ship_mode as select
+create or replace view dfs.tpcds_sf1_parquet_views.ship_mode as select
 cast( sm_ship_mode_sk as integer)  as sm_ship_mode_sk,
 cast( sm_ship_mode_id as varchar(200))  as sm_ship_mode_id,
 cast( sm_type as varchar(200))  as sm_type,
@@ -232,19 +232,19 @@ cast( sm_carrier as varchar(200))  as sm_carrier,
 cast( sm_contract as varchar(200))  as sm_contract
 from dfs.`/drill/testdata/tpcds_sf1/parquet/ship_mode`;
 
-create or replace view reason as select
+create or replace view dfs.tpcds_sf1_parquet_views.reason as select
 cast( r_reason_sk as integer)  as r_reason_sk,
 cast( r_reason_id as varchar(200))  as r_reason_id,
 cast( r_reason_desc as varchar(200))  as r_reason_desc
 from dfs.`/drill/testdata/tpcds_sf1/parquet/reason`;
 
-create or replace view income_band as select
+create or replace view dfs.tpcds_sf1_parquet_views.income_band as select
 cast( ib_income_band_sk as integer)  as ib_income_band_sk,
 cast( ib_lower_bound as integer)  as ib_lower_bound,
 cast( ib_upper_bound as integer)  as ib_upper_bound
 from dfs.`/drill/testdata/tpcds_sf1/parquet/income_band`;
 
-create or replace view call_center as select
+create or replace view dfs.tpcds_sf1_parquet_views.call_center as select
 cast( cc_call_center_sk as integer)  as cc_call_center_sk,
 cast( cc_call_center_id as varchar(200))  as cc_call_center_id,
 cast( cc_rec_start_date as date)  as cc_rec_start_date,
@@ -278,7 +278,7 @@ cast( cc_gmt_offset as double)  as cc_gmt_offset,
 cast( cc_tax_percentage as double)  as cc_tax_percentage
 from dfs.`/drill/testdata/tpcds_sf1/parquet/call_center`;
 
-create or replace view web_site as select
+create or replace view dfs.tpcds_sf1_parquet_views.web_site as select
 cast( web_site_sk as integer)  as web_site_sk,
 cast( web_site_id as varchar(200))  as web_site_id,
 cast( web_rec_start_date as date)  as web_rec_start_date,
@@ -307,7 +307,7 @@ cast( web_gmt_offset as double)  as web_gmt_offset,
 cast( web_tax_percentage as double)  as web_tax_percentage
 from dfs.`/drill/testdata/tpcds_sf1/parquet/web_site`;
 
-create or replace view store_returns as select
+create or replace view dfs.tpcds_sf1_parquet_views.store_returns as select
 cast( sr_returned_date_sk as integer)  as sr_returned_date_sk,
 cast( sr_return_time_sk as integer)  as sr_return_time_sk,
 cast( sr_item_sk as integer)  as sr_item_sk,
@@ -330,7 +330,7 @@ cast( sr_store_credit as double)  as sr_store_credit,
 cast( sr_net_loss as double)  as sr_net_loss
 from dfs.`/drill/testdata/tpcds_sf1/parquet/store_returns`;
 
-create or replace view web_page as select
+create or replace view dfs.tpcds_sf1_parquet_views.web_page as select
 cast( wp_web_page_sk as integer)  as wp_web_page_sk,
 cast( wp_web_page_id as varchar(200))  as wp_web_page_id,
 cast( wp_rec_start_date as date)  as wp_rec_start_date,
@@ -347,7 +347,7 @@ cast( wp_image_count as integer)  as wp_image_count,
 cast( wp_max_ad_count as integer)  as wp_max_ad_count
 from dfs.`/drill/testdata/tpcds_sf1/parquet/web_page`;
 
-create or replace view catalog_page as select
+create or replace view dfs.tpcds_sf1_parquet_views.catalog_page as select
 cast( cp_catalog_page_sk as integer)  as cp_catalog_page_sk,
 cast( cp_catalog_page_id as varchar(200))  as cp_catalog_page_id,
 cast( cp_start_date_sk as integer)  as cp_start_date_sk,
@@ -359,14 +359,14 @@ cast( cp_description as varchar(200))  as cp_description,
 cast( cp_type as varchar(200))  as cp_type
 from dfs.`/drill/testdata/tpcds_sf1/parquet/catalog_page`;
 
-create or replace view inventory as select
+create or replace view dfs.tpcds_sf1_parquet_views.inventory as select
 cast( inv_date_sk as integer)  as inv_date_sk,
 cast( inv_item_sk as integer)  as inv_item_sk,
 cast( inv_warehouse_sk as integer)  as inv_warehouse_sk,
 cast( inv_quantity_on_hand as integer)  as inv_quantity_on_hand
 from dfs.`/drill/testdata/tpcds_sf1/parquet/inventory`;
 
-create or replace view catalog_returns as select
+create or replace view dfs.tpcds_sf1_parquet_views.catalog_returns as select
 cast( cr_returned_date_sk as integer)  as cr_returned_date_sk,
 cast( cr_returned_time_sk as integer)  as cr_returned_time_sk,
 cast( cr_item_sk as integer)  as cr_item_sk,
@@ -396,7 +396,7 @@ cast( cr_store_credit as double)  as cr_store_credit,
 cast( cr_net_loss as double)  as cr_net_loss
 from dfs.`/drill/testdata/tpcds_sf1/parquet/catalog_returns`;
 
-create or replace view web_returns as select
+create or replace view dfs.tpcds_sf1_parquet_views.web_returns as select
 cast( wr_returned_date_sk as integer)  as wr_returned_date_sk,
 cast( wr_returned_time_sk as integer)  as wr_returned_time_sk,
 cast( wr_item_sk as integer)  as wr_item_sk,
@@ -423,7 +423,7 @@ cast( wr_account_credit as double)  as wr_account_credit,
 cast( wr_net_loss as double)  as wr_net_loss
 from dfs.`/drill/testdata/tpcds_sf1/parquet/web_returns`;
 
-create or replace view web_sales as select
+create or replace view dfs.tpcds_sf1_parquet_views.web_sales as select
 cast( ws_sold_date_sk as integer)  as ws_sold_date_sk,
 cast( ws_sold_time_sk as integer)  as ws_sold_time_sk,
 cast( ws_ship_date_sk as integer)  as ws_ship_date_sk,
@@ -460,7 +460,7 @@ cast( ws_net_paid_inc_ship_tax as double)  as ws_net_paid_inc_ship_tax,
 cast( ws_net_profit as double)  as ws_net_profit
 from dfs.`/drill/testdata/tpcds_sf1/parquet/web_sales`;
 
-create or replace view catalog_sales as select
+create or replace view dfs.tpcds_sf1_parquet_views.catalog_sales as select
 cast( cs_sold_date_sk as integer)  as cs_sold_date_sk,
 cast( cs_sold_time_sk as integer)  as cs_sold_time_sk,
 cast( cs_ship_date_sk as integer)  as cs_ship_date_sk,

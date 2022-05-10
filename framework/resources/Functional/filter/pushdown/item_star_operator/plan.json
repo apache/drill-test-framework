@@ -28,8 +28,19 @@
       "dest": "filter/pushdown/DRILL_6118_complex.parquet"
     },
     {
-      "mode": "gen",
-      "src": "Datasources/parquet_storage/DRILL-6118/DRILL_6118_execute_ddl.sh"
+      "mode": "ddl",
+      "src": "Datasources/parquet_storage/DRILL-6118/DRILL_6118_parquet_partitioned_by_files.ddl",
+      "dest": ""
+    },
+    {
+      "mode": "ddl",
+      "src": "Datasources/parquet_storage/DRILL-6118/DRILL_6118_parquet_partitioned_by_folders.ddl",
+      "dest": ""
+    },
+    {
+      "mode": "ddl",
+      "src": "Datasources/parquet_storage/DRILL-6118/DRILL_6118_parquet_without_partitioning.ddl",
+      "dest": ""
     }
   ]
 }

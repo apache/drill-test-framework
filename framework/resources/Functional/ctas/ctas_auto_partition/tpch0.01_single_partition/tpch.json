@@ -58,9 +58,19 @@
             "dest": "Tpch0.01/parquet/orders/orders.parquet"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/ctas_auto_partition/setup.sh",
+            "mode": "rm",
+            "src": "",
+            "dest": "ctas_auto_partition/tpch_single_partition"
+        },
+        {
+            "mode": "mkdir",
+            "src": "",
+            "dest": "ctas_auto_partition/tpch_single_partition"
+        },
+        {
+            "mode": "ddl",
+            "src": "Datasources/ctas_auto_partition/create_tables.ddl",
             "dest": ""
-        } 
+        }
     ]
 }

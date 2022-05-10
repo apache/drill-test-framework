@@ -19,7 +19,9 @@ package org.apache.drill.test.framework;
 
 import com.google.common.collect.Queues;
 import com.google.common.annotations.VisibleForTesting;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -29,7 +31,7 @@ import java.util.Properties;
 import java.util.Queue;
 
 public class ConnectionPool implements AutoCloseable {
-  private static final Logger LOG = Logger.getLogger("DrillTestLogger");
+  private static final Logger LOG = LoggerFactory.getLogger("DrillTestLogger");
   private final Map<String, Queue<Connection>> connections;
   private Properties connectionProperties;
 

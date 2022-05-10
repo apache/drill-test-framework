@@ -20,8 +20,28 @@
   "datasources" : [
     {
       "mode": "gen",
-      "src": "Datasources/schema_change_empty_batch/json/setup.sh",
+      "src": "Datasources/schema_change_empty_batch/json/setup.sh $DRILL_TESTDATA_DIR",
       "dest": ""
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/schema_change_empty_batch/data/json/part",
+      "dest": "schema_change_empty_batch/json/part"
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/schema_change_empty_batch/data/json/partsupp",
+      "dest": "schema_change_empty_batch/json/partsupp"
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/schema_change_empty_batch/data/json/empty",
+      "dest": "schema_change_empty_batch/json/empty"
+    },
+    {
+      "mode": "post_cp",
+      "src": "Datasources/schema_change_empty_batch/data/json/part_small",
+      "dest": "schema_change_empty_batch/json/part_small"
     }
   ]
 }

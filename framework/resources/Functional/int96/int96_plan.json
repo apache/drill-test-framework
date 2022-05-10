@@ -19,6 +19,16 @@
             "mode": "cp",
             "src": "Datasources/subqueries",
             "dest": "subqueries"
+        },
+        {
+            "mode": "rm",
+            "src": "",
+            "dest": "subqueries/hive1_parquet_part"
+        },
+        {
+            "mode": "ddl",
+            "src": "Datasources/subqueries/create_tables.sql",
+            "dest": ""
         }
     ]
 }

@@ -20,10 +20,11 @@ package org.apache.drill.test.framework;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import org.apache.drill.test.framework.TestCaseModeler.TestMatrix;
+import org.apache.drill.test.framework.TestVerifier.PlanVerificationException;
 import org.apache.drill.test.framework.TestVerifier.TestStatus;
 import org.apache.drill.test.framework.TestVerifier.VerificationException;
-import org.apache.drill.test.framework.TestVerifier.PlanVerificationException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,14 +34,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DrillTestJdbc implements DrillTest {
-  private static final Logger LOG = Logger.getLogger("DrillTestLogger");
+  private static final Logger LOG = LoggerFactory.getLogger("DrillTestLogger");
   private static final String LINE_BREAK = "------------------------------------------------------------------------";
 
   private ConnectionPool connectionPool;
@@ -248,7 +248,7 @@ public class DrillTestJdbc implements DrillTest {
       }
 
       LOG.debug("Result set data types:");
-      LOG.debug(Utils.getTypesInStrings(columnTypes));
+      LOG.debug(Utils.getTypesInStrings(columnTypes).toString());
 
       if (resultSet != null) {
         while (resultSet.next()) {
@@ -258,7 +258,7 @@ public class DrillTestJdbc implements DrillTest {
         }
       }
     } catch (IllegalArgumentException | IllegalAccessException | IOException e1) {
-		LOG.warn(e1);
+		LOG.warn(e1.getMessage(), e1);
 	} finally {
 	  doneProcessingResultSet.set(true);
       if (resultSet != null) {
@@ -322,7 +322,7 @@ public class DrillTestJdbc implements DrillTest {
             : new VerificationException(exception + "\n" + msg);
       }
     } catch (IllegalArgumentException | IllegalAccessException e1) {
-      LOG.warn(e1);
+      LOG.warn(e1.getMessage(), e1);
     } finally {
       if (resultSet != null) resultSet.close();
       if (writer != null) writer.close();

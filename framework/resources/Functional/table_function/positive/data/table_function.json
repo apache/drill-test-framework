@@ -18,13 +18,13 @@
     ],
     "datasources": [
       {
-         "mode": "cp",
+         "mode": "post_cp",
          "src": "Datasources/table_function",
          "dest": "table_function/"
       },
       {
         "mode": "gen",
-        "src": "Datasources/table_function/DRILL-5166_generate_data.sh",
+        "src": "Datasources/table_function/DRILL-5166_generate_data.sh $DRILL_TESTDATA_DIR",
         "dest": ""
       }
     ]

@@ -5,6 +5,7 @@ source conf/drillTestConfig.properties
 cd ${bin}/../
 
 default_debug_string="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=50000,server=y,suspend=y"
+JDBC_DRIVER_CP="${DRILL_HOME}/jars/jdbc-driver/drill-jdbc-all-${DRILL_VERSION}.jar"
 
 ARGS=()
 while [[ $# > 0 ]]
@@ -18,6 +19,11 @@ do
     ;;
   --debug)
     DRILL_TEST_FRAMEWORK_JAVA_OPTS="$DRILL_TEST_FRAMEWORK_JAVA_OPTS $default_debug_string"
+    shift
+    ;;
+  --jdbcCP)
+    shift
+    JDBC_DRIVER_CP=$1
     shift
     ;;
   *)
@@ -34,7 +40,7 @@ done
 # use the following line when testing apache drill JDBC driver
 if [[ $HADOOP_VERSION == *"mapr"* ]]
 then
-  java $DRILL_TEST_FRAMEWORK_JAVA_OPTS -Xss40m -cp .:conf/:${DRILL_HOME}/jars/jdbc-driver/drill-jdbc-all-${DRILL_VERSION}.jar:framework/target/framework-1.0.0-SNAPSHOT-shaded.jar -Dfs.mapr.bailout.on.library.mismatch=false -Djava.io.tmpdir=/tmp/drill/tests -Djava.security.auth.login.config=/opt/mapr/conf/mapr.login.conf -Dzookeeper.sasl.client=false org.apache.drill.test.framework.TestDriver "${ARGS[@]}"
+  java $DRILL_TEST_FRAMEWORK_JAVA_OPTS -Xss40m -cp .:conf/:${JDBC_DRIVER_CP}:framework/target/framework-1.0.0-SNAPSHOT-shaded.jar -Dfs.mapr.bailout.on.library.mismatch=false -Djava.io.tmpdir=/tmp/drill/tests -Djava.security.auth.login.config=/opt/mapr/conf/mapr.login.conf -Dzookeeper.sasl.client=false org.apache.drill.test.framework.TestDriver "${ARGS[@]}"
 else
-  java $DRILL_TEST_FRAMEWORK_JAVA_OPTS -Xss40m -cp .:conf/:${DRILL_HOME}/jars/jdbc-driver/drill-jdbc-all-${DRILL_VERSION}.jar:framework/target/framework-1.0.0-SNAPSHOT-shaded.jar org.apache.drill.test.framework.TestDriver "${ARGS[@]}"
+  java $DRILL_TEST_FRAMEWORK_JAVA_OPTS -Xss40m -cp .:conf/:${JDBC_DRIVER_CP}:framework/target/framework-1.0.0-SNAPSHOT-shaded.jar org.apache.drill.test.framework.TestDriver "${ARGS[@]}"
 fi

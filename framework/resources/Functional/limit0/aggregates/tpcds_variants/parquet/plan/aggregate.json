@@ -24,8 +24,8 @@
             "dest": "tpcds_sf1/parquet"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/limit0/aggregates/tpcds_variants/parquet/create_tpcdsVariants_views.sh",
+            "mode": "ddl",
+            "src": "Datasources/limit0/aggregates/tpcds_variants/parquet/create_tpcdsVariants_views.sql",
             "dest": ""
         }
     ]

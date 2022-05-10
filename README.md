@@ -36,11 +36,25 @@ bin/build_framework -Pdownload
 
 If you've already downloaded the datasets previously, you can simply skip the download.
 
+If you're going to run tests in docker, you'll need to build the docker image first:
+
+```
+mvn clean install docker:build -DskipTests
+```
+
 ## Execute Tests
 
 In the root directory of your repository, execute the following command to run tests:
 
-`bin/run_tests -s <suites> -g <groups> -t <Timeout> -x <Exclude> -n <Concurrency> -d`
+```
+bin/run_tests -s <suites> -g <groups> -t <Timeout> -x <Exclude> -n <Concurrency> -d`
+```
+
+Alternatively, you can run tests in docker:
+
+```
+mvn docker:start -Dtest.args="-s <suites> -g <groups> -t <Timeout> -x <Exclude> -n <Concurrency> -d"
+```
 
 Example:
  <pre><code> bin/run_tests -s Functional/aggregates,Functional/joins -g functional -x hbase -t 180 -n 20 -d
@@ -57,7 +71,8 @@ Example:
   -n concurrency (optional)
      Here, '20' queries can execute concurrently
   -x exclude dependencies (optional)
-     Here, any 'hbase' test suites within the specified directory are excluded
+     Here, any test suites within the specified directory that have specified dependencies are excluded.
+     In case of "-x all" all tests suites that have at least one dependency are excluded
   -h help (optional)
      Use this option to provide the usage of the command, which includes additional options
 </code></pre>

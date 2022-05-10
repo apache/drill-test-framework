@@ -22,7 +22,6 @@ import com.beust.jcommander.ParameterException;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import org.apache.drill.test.framework.TestCaseModeler.DataSource;
 import org.apache.drill.test.framework.TestVerifier.TestStatus;
 import org.apache.hadoop.conf.Configuration;
@@ -31,9 +30,10 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.FileAlreadyExistsException;
-import org.apache.log4j.Logger;
 import org.ojai.Document;
 import org.ojai.json.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,14 +42,25 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.DatabaseMetaData;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
 
 public class TestDriver {
-  private static final Logger LOG = Logger.getLogger("DrillTestLogger");
+  private static final Logger LOG = LoggerFactory.getLogger("DrillTestLogger");
   private Connection connection = null;
   public static String commitId, version;
   private String[] injectionKeys = {"DRILL_VERSION"};
@@ -59,6 +70,7 @@ public class TestDriver {
   private ConnectionPool connectionPool;
   private int countTotalTests;
   private Properties connectionProperties;
+  private static boolean minioEnabled;
 
   private static Configuration conf = new Configuration();
   public static final CmdParam cmdParam = new CmdParam();
@@ -184,8 +196,10 @@ public class TestDriver {
   	  queryMemoryUsage();
     }
 
+    List<String> excludedDependencies = cmdParam.excludeDependenciesAsList();
+    minioEnabled = !excludedDependencies.contains("all") && !excludedDependencies.contains("s3minio");
     // Run Apache Minio server if s3minio tests aren't excluded
-    if(cmdParam.excludeDependencies == null || !cmdParam.excludeDependencies.contains("s3minio")) {
+    if(minioEnabled) {
       Utils.startMinio();
     } else {
       // Disable s3minio storage plugin if Minio server is down
@@ -667,7 +681,7 @@ public class TestDriver {
     	  injections.put(injectionKeys[i], version);
     	  break;
     	default:
-    	  LOG.fatal("Injection parameter not recognized!");
+    	  LOG.error("Injection parameter not recognized!");
     	}    	
       }
       connectionPool.releaseConnection(connection);
@@ -712,7 +726,7 @@ public class TestDriver {
 	connectionPool.releaseConnection(connection);
 
     // Stop Apache Minio server if it was started
-    if(cmdParam.excludeDependencies == null || !cmdParam.excludeDependencies.contains("s3minio")) {
+    if(minioEnabled) {
       Utils.stopMinio();
     }
   }
@@ -728,63 +742,233 @@ public class TestDriver {
 
     boolean restartDrillbits = false;
 
-    CancelingExecutor copyExecutor = new CancelingExecutor(cmdParam.threads, Integer.MAX_VALUE);
-    CancelingExecutor genExecutor = new CancelingExecutor(cmdParam.threads, Integer.MAX_VALUE);
-    List<Cancelable> copyTasks = Lists.newArrayList();
-    List<Cancelable> genTasks = Lists.newArrayList();
+    List<Cancelable> rmTasks = new ArrayList<>();
+    List<Cancelable> copyTasks = new ArrayList<>();
+    List<Cancelable> mkdirTasks = new ArrayList<>();
+    List<Cancelable> genTasks = new ArrayList<>();
+    List<Cancelable> postRmTasks = new ArrayList<>();
+    List<Cancelable> postCopyTasks = new ArrayList<>();
+    List<Cancelable> dfsCopyTasks = new ArrayList<>();
+    List<Cancelable> ddlTasks = new ArrayList<>();
     for (final TestCaseModeler.DataSource datasource : dataSources) {
       String mode = datasource.mode;
-      if (mode.equals("cp")) {
-        Cancelable task = new Cancelable() {
-          @Override
-          public void cancel() {
-            // no op, as this will not time out
-          }
-
-          @Override
-          public void run() {
-            try {
-              Path src = new Path(DrillTestDefaults.TEST_ROOT_DIR + "/" + DrillTestDefaults.DRILL_TESTDATA_DIR + "/" + datasource.src);
-              Path dest = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.dest);
-              dfsCopy(src, dest, DrillTestDefaults.FS_MODE);
-            } catch (IOException e) {
-              throw new RuntimeException(e);
+      switch (mode) {
+        case "rm": {
+          Cancelable task = new Cancelable() {
+            @Override
+            public void cancel() {
+              // no op, as this will not time out
             }
-          }
-        };
-        copyTasks.add(task);
-      } else if (mode.equals("gen")) {
-        Cancelable task = new Cancelable() {
-          @Override
-          public void cancel() {
-            // no op, as this will not time out
-          }
 
-          @Override
-          public void run() {
-            runGenerateScript(datasource);
-          }
-        };
-        genTasks.add(task);
-      } else if (mode.equals("restart-drill")) {
-        restartDrillbits = true;
+            @Override
+            public void run() {
+              try {
+                Path dest = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.dest);
+                dfsDelete(dest, DrillTestDefaults.FS_MODE);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            }
+          };
+          rmTasks.add(task);
+          break;
+        }
+        case "cp": {
+          Cancelable task = new Cancelable() {
+            @Override
+            public void cancel() {
+              // no op, as this will not time out
+            }
+
+            @Override
+            public void run() {
+              try {
+                Path src = new Path(DrillTestDefaults.TEST_ROOT_DIR + "/" + DrillTestDefaults.DRILL_TESTDATA_DIR + "/" + datasource.src);
+                Path dest = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.dest);
+                dfsCopy(src, dest, DrillTestDefaults.FS_MODE);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            }
+          };
+          copyTasks.add(task);
+          break;
+        }
+        case "mkdir": {
+          Cancelable task = new Cancelable() {
+            @Override
+            public void cancel() {
+              // no op, as this will not time out
+            }
+
+            @Override
+            public void run() {
+              try {
+                Path dest = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.dest);
+                dfsMkdir(dest, DrillTestDefaults.FS_MODE);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            }
+          };
+          mkdirTasks.add(task);
+          break;
+        }
+        case "gen": {
+          Cancelable task = new Cancelable() {
+            @Override
+            public void cancel() {
+              // no op, as this will not time out
+            }
+
+            @Override
+            public void run() {
+              runGenerateScript(datasource);
+            }
+          };
+          genTasks.add(task);
+          break;
+        }
+        case "post_rm": {
+          Cancelable task = new Cancelable() {
+            @Override
+            public void cancel() {
+              // no op, as this will not time out
+            }
+
+            @Override
+            public void run() {
+              try {
+                Path dest = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.dest);
+                dfsDelete(dest, DrillTestDefaults.FS_MODE);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            }
+          };
+          postRmTasks.add(task);
+          break;
+        }
+        case "post_cp": {
+          Cancelable task = new Cancelable() {
+            @Override
+            public void cancel() {
+              // no op, as this will not time out
+            }
+
+            @Override
+            public void run() {
+              try {
+                Path src = new Path(DrillTestDefaults.TEST_ROOT_DIR + "/" + DrillTestDefaults.DRILL_TESTDATA_DIR + "/" + datasource.src);
+                Path dest = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.dest);
+                dfsCopy(src, dest, DrillTestDefaults.FS_MODE);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            }
+          };
+          postCopyTasks.add(task);
+          break;
+        }
+        case "dfs_cp": {
+          Cancelable task = new Cancelable() {
+            @Override
+            public void cancel() {
+              // no op, as this will not time out
+            }
+
+            @Override
+            public void run() {
+              try {
+                Path src = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.src);
+                Path dest = new Path(DrillTestDefaults.DRILL_TESTDATA, datasource.dest);
+                dfsToDfsCopy(src, dest, DrillTestDefaults.FS_MODE);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            }
+          };
+          dfsCopyTasks.add(task);
+          break;
+        }
+        case "ddl": {
+          Cancelable task = new Cancelable() {
+            @Override
+            public void cancel() {
+              // no op, as this will not time out
+            }
+
+            @Override
+            public void run() {
+              Path src = new Path(DrillTestDefaults.TEST_ROOT_DIR + "/" + DrillTestDefaults.DRILL_TESTDATA_DIR + "/" + datasource.src);
+              runDDL(src);
+            }
+          };
+          ddlTasks.add(task);
+          break;
+        }
+        case "restart-drill":
+          restartDrillbits = true;
+          break;
       }
     }
 
     final Stopwatch stopwatch = Stopwatch.createStarted();
-    
-    LOG.info("> Copying Data");
-    copyExecutor.executeAll(copyTasks);
-    copyExecutor.close();
-    LOG.info(">> Copy duration: " + stopwatch + "\n");
-    stopwatch.reset().start();
-    LOG.info("> Generating Data");
-    genExecutor.executeAll(genTasks);
-    genExecutor.close();
-    LOG.info("\n>> Generation duration: " + stopwatch + "\n");
+
+    try (CancelingExecutor executor = new CancelingExecutor(cmdParam.threads, Integer.MAX_VALUE)) {
+      if (!rmTasks.isEmpty()) {
+        LOG.info("> Clearing Data");
+        executor.executeAll(rmTasks);
+      }
+      if (!copyTasks.isEmpty()) {
+        LOG.info("> Copying Data");
+        executor.executeAll(copyTasks);
+        LOG.info(">> Copy duration: " + stopwatch + "\n");
+        stopwatch.reset().start();
+      }
+      if (!mkdirTasks.isEmpty()) {
+        LOG.info("> Making directories");
+        executor.executeAll(mkdirTasks);
+      }
+      if (!genTasks.isEmpty()) {
+        LOG.info("> Generating Data");
+        executor.executeAll(genTasks);
+        LOG.info("\n>> Generation duration: " + stopwatch + "\n");
+      }
+      if (!rmTasks.isEmpty()) {
+        LOG.info("> Clearing Data after generating");
+        executor.executeAll(postRmTasks);
+      }
+      if (!postCopyTasks.isEmpty()) {
+        LOG.info("> Copying generated Data");
+        executor.executeAll(postCopyTasks);
+      }
+      if (!dfsCopyTasks.isEmpty()) {
+        LOG.info("> Rearranging Data on DFS");
+        executor.executeAll(dfsCopyTasks);
+      }
+      if (!ddlTasks.isEmpty()) {
+        LOG.info("> Executing DDL scripts");
+        executor.executeAll(ddlTasks);
+      }
+    }
 
     if (restartDrillbits) {
       Utils.restartDrill();
+    }
+  }
+
+  private void dfsDelete(Path dest, String fsMode) throws IOException {
+    FileSystem fs;
+
+    if (fsMode.equals("distributedFS")) {
+      fs = FileSystem.get(conf);
+    } else {
+      fs = FileSystem.getLocal(conf);
+    }
+
+    if (fs.exists(dest)) {
+      fs.delete(dest, true);
     }
   }
 
@@ -818,31 +1002,95 @@ public class TestDriver {
           LOG.debug("File " + src + " already exists as " + dest);
         }
       }
-    } catch (FileAlreadyExistsException e) {
-      LOG.debug("File " + src + " already exists as " + dest);
     } catch (IOException e) {
       LOG.debug("File " + src + " already exists as " + dest);
     }
   }
 
+  private void dfsToDfsCopy(Path src, Path dest, String fsMode)
+          throws IOException {
+
+    FileSystem fs;
+
+    if (fsMode.equals("distributedFS")) {
+      fs = FileSystem.get(conf);
+    } else {
+      fs = FileSystem.getLocal(conf);
+    }
+
+    try {
+      if (fs.getFileStatus(src).isDirectory()) {
+        for (FileStatus file : fs.listStatus(src)) {
+          Path srcChild = file.getPath();
+          Path newDest = new Path(dest + "/" + srcChild.getName());
+          dfsCopy(srcChild, newDest, fsMode);
+        }
+      } else {
+        if (!fs.exists(dest.getParent())) {
+          fs.mkdirs(dest.getParent());
+        }
+        if (!fs.exists(dest)) {
+          FileUtil.copy(fs, src, fs, dest, false, fs.getConf());
+          LOG.debug("Copying file " + src + " to " + dest);
+        } else {
+          LOG.debug("File " + src + " already exists as " + dest);
+        }
+      }
+    } catch (IOException e) {
+      LOG.debug("File " + src + " already exists as " + dest);
+    }
+  }
+
+  private void dfsMkdir(Path dest, String fsMode) throws IOException {
+    FileSystem fs;
+
+    if (fsMode.equals("distributedFS")) {
+      fs = FileSystem.get(conf);
+    } else {
+      fs = FileSystem.getLocal(conf);
+    }
+
+    if (!fs.exists(dest)) {
+      fs.mkdirs(dest);
+    }
+  }
+
   private void runGenerateScript(DataSource datasource) {
-	String command = DrillTestDefaults.TEST_ROOT_DIR + "/" + DrillTestDefaults.DRILL_TESTDATA_DIR + "/" + datasource.src;
-	LOG.info("Running command " + command);
-	CmdConsOut cmdConsOut;
-	try {
-	  cmdConsOut = Utils.execCmd(command);
-	  LOG.debug(cmdConsOut);
-	} catch (Exception e) {
-	  cmdConsOut = new CmdConsOut();
-	  cmdConsOut.cmd = command;
-	  cmdConsOut.consoleErr = e.getMessage();
-	  LOG.error("Error: Failed to execute the command " + cmdConsOut);
-	  throw new RuntimeException(e);
-	}
-	if (cmdConsOut.exitCode != 0) {
-	  throw new RuntimeException("Error executing the command " + command
-	          + " has return code " + cmdConsOut.exitCode);
-	}
+    String command = DrillTestDefaults.TEST_ROOT_DIR + "/" + DrillTestDefaults.DRILL_TESTDATA_DIR + "/" + datasource.src;
+    if (command.endsWith(".ddl") && command.split(" ").length == 1) {
+      runDDL(new Path(command));
+    } else {
+      command = Utils.substituteArguments(command);
+      LOG.info("Running command " + command);
+      CmdConsOut cmdConsOut;
+      try {
+        cmdConsOut = Utils.execCmd(command);
+        LOG.debug(cmdConsOut.toString());
+      } catch (Exception e) {
+        cmdConsOut = new CmdConsOut();
+        cmdConsOut.cmd = command;
+        cmdConsOut.consoleErr = e.getMessage();
+        LOG.error("Error: Failed to execute the command " + cmdConsOut);
+        throw new RuntimeException(e);
+      }
+      if (cmdConsOut.exitCode != 0) {
+        throw new RuntimeException("Error executing the command " + command
+                + " has return code " + cmdConsOut.exitCode);
+      }
+    }
+  }
+
+  private void runDDL(Path src) {
+    try (Connection conn = connectionPool.getOrCreateConnection()) {
+      String[] queries = Utils.getSqlStatements(src.toString());
+      try (Statement statement = conn.createStatement()) {
+        for (String query : queries) {
+          statement.execute(query);
+        }
+      }
+    } catch (SQLException | IOException e) {
+      LOG.error("Error executing ddl " + src, e);
+    }
   }
   
   private DrillTest getDrillTest(DrillTestCase modeler, ConnectionPool connectionPool, int cloneId, int totalCases) {
@@ -884,7 +1132,7 @@ public class TestDriver {
       }
 
       LOG.debug("Result set data types:");
-      LOG.debug(Utils.getTypesInStrings(types));
+      LOG.debug(Utils.getTypesInStrings(types).toString());
 
       if (resultSet != null) {
         while (resultSet.next()) {

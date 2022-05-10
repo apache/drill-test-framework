@@ -24,6 +24,10 @@ import org.junit.Assert;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -149,6 +153,10 @@ public class DrillTestDefaults {
    
   private static final Map<String, String> drillProperties;
 
+  private static class DrillDefaultsHolder {
+    private static final Map<String, String> drillDefaults = generateDefaultsMap();
+  }
+
   static {
     drillProperties = getConfigProperties();
     loadConfigProperties();
@@ -156,6 +164,10 @@ public class DrillTestDefaults {
 
   public static Map<String, String> getDrillProperties() {
     return drillProperties;
+  }
+
+  public static Map<String, String> getDrillDefaults() {
+    return DrillDefaultsHolder.drillDefaults;
   }
 
   /**
@@ -183,6 +195,23 @@ public class DrillTestDefaults {
       properties.put(key.trim(), bundle.getString(key).trim());
     }
     return ImmutableMap.copyOf(properties);
+  }
+
+  private static Map<String, String> generateDefaultsMap() {
+    Field[] fields = DrillTestDefaults.class.getDeclaredFields();
+    Map<String, String> defaults = new HashMap<>();
+    Arrays.stream(fields)
+            .filter(f -> String.class.equals(f.getType()))
+            .filter(f -> Modifier.isPublic(f.getModifiers()))
+            .filter(f -> Modifier.isStatic(f.getModifiers()))
+            .forEach(f -> {
+              try {
+                defaults.put(f.getName(), (String) f.get(null));
+              } catch (IllegalAccessException e) {
+                throw new IllegalStateException(e); // Already filtered for public only fields
+              }
+            });
+    return defaults;
   }
 
   /**

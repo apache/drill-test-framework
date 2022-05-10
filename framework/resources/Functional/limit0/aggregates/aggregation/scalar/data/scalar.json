@@ -21,8 +21,8 @@
             "dest": "aggregation"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/limit0/aggregates/aggregation/scalar/create_scalar_views.sh",
+            "mode": "ddl",
+            "src": "Datasources/limit0/aggregates/aggregation/scalar/create_scalar_views.sql",
             "dest": ""
         }
     ]

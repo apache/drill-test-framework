@@ -21,11 +21,20 @@
             "dest": "subqueries"
         },
         {
-            "mode": "gen",
-            "src": "Datasources/subqueries/create_views.sh",
+            "mode": "rm",
+            "src": "",
+            "dest": "subqueries/optional_type_v.view.drill"
+        },
+        {
+            "mode": "rm",
+            "src": "",
+            "dest": "subqueries/required_type_v.view.drill"
+        },
+        {
+            "mode": "ddl",
+            "src": "Datasources/subqueries/create_views.sql",
             "dest": ""
         }
-
     ]
 }
 

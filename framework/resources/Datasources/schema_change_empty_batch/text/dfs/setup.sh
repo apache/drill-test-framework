@@ -1,5 +1,5 @@
 #!/bin/bash
-source conf/drillTestConfig.properties
+DRILL_TEST_DATA_DIR=$1
 
 set -x
 set -e
@@ -35,24 +35,7 @@ if [ ! -d ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/psv/
 
         touch ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/psv/partsupp/partsuppa{f..h}.tbl
 
-        touch ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/psv/empty/empty{a..d}.tbl
-
-fi
-
-if ! $(hadoop fs -test -d ${DRILL_TESTDATA}/schema_change_empty_batch/psv)
-    then
-
-        echo "Copying to hadoop"
-
-        hadoop fs -mkdir -p ${DRILL_TESTDATA}/schema_change_empty_batch/psv
-
-        hadoop fs -put ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/psv/part ${DRILL_TESTDATA}/schema_change_empty_batch/psv/
-
-        hadoop fs -put ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/psv/partsupp ${DRILL_TESTDATA}/schema_change_empty_batch/psv/
-
-        hadoop fs -put ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/psv/empty ${DRILL_TESTDATA}/schema_change_empty_batch/psv/
-
-        hadoop fs -put ${DRILL_TEST_DATA_DIR}/Datasources/schema_change_empty_batch/data/psv/json_field ${DRILL_TESTDATA}/schema_change_empty_batch/psv/
+        touch ${DRILL_TEST_DATA_DIR}/Datasources/spsv/json_field/empty_json_field.tblchema_change_empty_batch/data/psv/empty/empty{a..d}.tbl
 
 fi
 

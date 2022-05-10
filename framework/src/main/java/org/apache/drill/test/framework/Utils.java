@@ -72,7 +72,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -86,7 +87,7 @@ import static org.apache.drill.test.framework.DrillTestDefaults.*;
  *
  */
 public class Utils {
-  private static final Logger LOG = Logger.getLogger("DrillTestLogger");
+  private static final Logger LOG = LoggerFactory.getLogger("DrillTestLogger");
   private static final Map<Integer, String> sqlTypes;
   private static final Map<Integer, String> sqlNullabilities;
   private static HttpClient client;
@@ -343,9 +344,11 @@ public class Utils {
         }
         boolean skipSuite = false;
         if (modeler.dependencies != null) {
+          List<String> excludedDependencies = TestDriver.cmdParam.excludeDependenciesAsList();
           for (String dependency : modeler.dependencies) {
-            if (TestDriver.cmdParam.excludeDependenciesAsList().contains(dependency)) {
+            if (excludedDependencies.contains("all") || excludedDependencies.contains(dependency)) {
               skipSuite = true;
+              break;
             }
           }
         }
@@ -571,7 +574,7 @@ public class Utils {
 	  }
 
 	  LOG.debug("Result set data types:");
-	  LOG.debug(Utils.getTypesInStrings(types));
+	  LOG.debug(Utils.getTypesInStrings(types).toString());
 	  stringBuffer.append(new ColumnList(types, columnLabels).toString()).append("\n");
 
 	  while (resultSet.next()) {
@@ -1155,5 +1158,19 @@ public class Utils {
       LOG.warn("Failure while trying to load \"git.properties\" file.", e);
     }
     return String.format("Commit: %s\nAuthor: %s <%s>\n\n%s", commitID, commitAuthor, commitEmail, commitMessage);
+  }
+
+  public static String substituteArguments(String cmd) {
+    String[] command = cmd.split(" ");
+    for (int i = 1; i < command.length; i++) {
+      String arg = command[i];
+      if (arg.startsWith("$")) {
+        arg = arg.substring(1);
+        if (DrillTestDefaults.getDrillDefaults().containsKey(arg)) {
+          command[i] = DrillTestDefaults.getDrillDefaults().get(arg);
+        }
+      }
+    }
+    return String.join(" ", command);
   }
 }

@@ -9,7 +9,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigRenderOptions;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +25,7 @@ import static org.apache.drill.test.framework.DrillTestDefaults.DRILL_EXEC_RM_CO
  * Represents a Drill RM Resource Pool configuration.
  */
 public class DrillRMConfig implements DrillConfigRenderer {
-    private static final Logger LOG = Logger.getLogger(DrillRMConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DrillRMConfig.class);
     //Resource Pool Configurations
     public static final String RESOURCE_POOL_NAME_KEY = "pool_name";
     public static final String MEMORY_KEY = "memory";
